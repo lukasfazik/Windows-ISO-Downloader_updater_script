@@ -47,7 +47,7 @@ class Version:
         page.get_page()
         self.re_check_code = re.compile("\d\.\d\d")  # checks for number followed by dot and two numbers
         self.match = self.re_check_code.search(page.page)
-        if self.match is None:
+        if self.match is None:  # if previous check didn't work, it will be tried with two digit version number
             self.re_check_code = re.compile("\d\d\.\d\d")   # if program version will get to two digit number
             self.match = self.re_check_code.search(page.page)
         self.version = self.match.group()
@@ -59,10 +59,7 @@ class Version:
         because string returns false when compared with same string
         :return: local program version as string
         """
-        try:
-            self.version = self.file.read()
-        except ValueError:
-            self.version = 0.0
+        self.version = self.file.read()
         return self.version
 
     def update_file(self):
@@ -83,7 +80,9 @@ if __name__ == "__main__":
     print("Windows-ISO-Downloader updater")
     print("Checking for updates...")
     local_version = version.get_from_file()
+    # local_version = "8.02"   # there is error with the local version because it works when do I override it like this
     remote_version = version.get_from_page()
+    # remote_version = "8.02"
     print(f"Version on the web: {remote_version}")
     print(f"Local version: {local_version}")
     if remote_version == local_version: # THIS THINK DOESN'T WORK!!! EVEN WITH SAME STRINGS!
