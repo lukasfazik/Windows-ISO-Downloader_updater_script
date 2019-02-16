@@ -1,3 +1,7 @@
+"""
+BUG IS IN VERSION.TXT HANDLING
+"""
+
 import re, requests, os
 
 
