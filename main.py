@@ -40,9 +40,9 @@ class Version:
 
     def get_from_page(self):
         """
-        From page contents in Page.page using regular expressions gets the version of the program as float
+        From page contents in Page.page using regular expressions gets the version of the program as string
         because when compared as string with same string it returned false
-        :return: Version of the program on the page as float
+        :return: Version of the program on the page as string
         """
         page.get_page()
         self.re_check_code = re.compile("\d\.\d\d")  # checks for number followed by dot and two numbers
@@ -50,17 +50,17 @@ class Version:
         if self.match is None:
             self.re_check_code = re.compile("\d\d\.\d\d")   # if program version will get to two digit number
             self.match = self.re_check_code.search(page.page)
-        self.version = float(self.match.group())
+        self.version = self.match.group()
         return self.version
 
     def get_from_file(self):
         """
-        From file named version.txt in the same directory returns version as float
+        From file named version.txt in the same directory returns version as string
         because string returns false when compared with same string
-        :return: local program version as float
+        :return: local program version as string
         """
         try:
-            self.version = float(self.file.read())
+            self.version = self.file.read()
         except ValueError:
             self.version = 0.0
         return self.version
@@ -82,8 +82,8 @@ if __name__ == "__main__":
     version = Version()
     print("Windows-ISO-Downloader updater")
     print("Checking for updates...")
-    local_version = float(version.get_from_file())
-    remote_version = float(version.get_from_page())
+    local_version = version.get_from_file()
+    remote_version = version.get_from_page()
     print(f"Version on the web: {remote_version}")
     print(f"Local version: {local_version}")
     if remote_version == local_version:
@@ -92,8 +92,8 @@ if __name__ == "__main__":
         exit()
     else:
         print("Program isn't up to date. Updating...")
-        page.download_program()
+        #page.download_program()
         version.update_file()
         print(f"Update completed. Launching {page.file_name}...")
-        os.system(page.file_name)
+        #os.system(page.file_name)
         exit()
