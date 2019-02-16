@@ -91,8 +91,8 @@ if __name__ == "__main__":
         exit()
     else:
         print("Program isn't up to date. Updating...")
-        #page.download_program()
+        # page.download_program()
         version.update_file()
         print(f"Update completed. Launching {page.file_name}...")
-        #os.system(page.file_name)
+        # os.system(page.file_name)
         exit()
