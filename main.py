@@ -86,7 +86,7 @@ if __name__ == "__main__":
     remote_version = version.get_from_page()
     print(f"Version on the web: {remote_version}")
     print(f"Local version: {local_version}")
-    if remote_version == local_version:
+    if remote_version == local_version: # THIS THINK DOESN'T WORK!!! EVEN WITH SAME STRINGS!
         print(f"Program is up to date. Launching {page.file_name}...")
         os.system(page.file_name)
         exit()
