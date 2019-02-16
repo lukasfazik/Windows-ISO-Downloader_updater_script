@@ -1,7 +1,3 @@
-"""
-BUG IS IN VERSION.TXT HANDLING
-"""
-
 import re, requests, os
 
 
@@ -38,7 +34,8 @@ class Version:
     def __init__(self):
         self.expression = None
         self.version = ""
-        self.file = open("version.txt", "r+")
+        # self.file = open("version.txt", "r+")
+        self.file = None
         self.re_check_code = None
         self.match = None
 
@@ -60,20 +57,21 @@ class Version:
     def get_from_file(self):
         """
         From file named version.txt in the same directory returns version as string
-        because string returns false when compared with same string
         :return: local program version as string
         """
+        self.file = open("version.txt", "r")
         self.version = self.file.read()
+        self.file.close()
         return self.version
 
     def update_file(self):
         """
         Updates file when called
-        Writes new version string to file and removes the old one
+        Overwrites a version in the file version.txt with the new one
         gets version from the page using version.get_from_page()
         :return:
         """
-        self.file.truncate(0)
+        self.file = open("version.txt", "w")
         self.file.write(str(self.get_from_page()))
         self.file.close()
 
@@ -84,19 +82,17 @@ if __name__ == "__main__":
     print("Windows-ISO-Downloader updater")
     print("Checking for updates...")
     local_version = version.get_from_file()
-    # local_version = "8.02"   # there is error with the local version because it works when do I override it like this
     remote_version = version.get_from_page()
-    # remote_version = "8.02"
     print(f"Version on the web: {remote_version}")
     print(f"Local version: {local_version}")
-    if remote_version == local_version: # THIS THINK DOESN'T WORK!!! EVEN WITH SAME STRINGS!
+    if remote_version == local_version:
         print(f"Program is up to date. Launching {page.file_name}...")
         os.system(page.file_name)
         exit()
     else:
         print("Program isn't up to date. Updating...")
-        # page.download_program()
+        page.download_program()
         version.update_file()
         print(f"Update completed. Launching {page.file_name}...")
-        # os.system(page.file_name)
+        os.system(page.file_name)
         exit()
