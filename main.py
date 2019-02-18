@@ -34,7 +34,6 @@ class Version:
     def __init__(self):
         self.expression = None
         self.version = ""
-        # self.file = open("version.txt", "r+")
         self.file = None
         self.re_check_code = None
         self.match = None
@@ -57,12 +56,20 @@ class Version:
     def get_from_file(self):
         """
         From file named version.txt in the same directory returns version as string
+        If file doesn't exist it wil create one
         :return: local program version as string
         """
-        self.file = open("version.txt", "r")
-        self.version = self.file.read()
-        self.file.close()
-        return self.version
+        try:
+            with open("version.txt", "r") as self.file:
+                self.version = self.file.read()
+                self.file.close()
+                return self.version
+        except FileNotFoundError:
+            print("File version.txt not found.")
+            print("Creating a new file...")
+            self.file = open("version.txt", "w")
+            self.file.close()
+            return None
 
     def update_file(self):
         """
@@ -71,28 +78,38 @@ class Version:
         gets version from the page using version.get_from_page()
         :return:
         """
-        self.file = open("version.txt", "w")
-        self.file.write(str(self.get_from_page()))
-        self.file.close()
+        with open("version.txt", "w") as self.file:
+            self.file.write(str(self.get_from_page()))
 
 
 if __name__ == "__main__":
     page = Page()
     version = Version()
     print("Windows-ISO-Downloader updater")
-    print("Checking for updates...")
-    local_version = version.get_from_file()
-    remote_version = version.get_from_page()
-    print(f"Version on the web: {remote_version}")
-    print(f"Local version: {local_version}")
-    if remote_version == local_version:
-        print(f"Program is up to date. Launching {page.file_name}...")
-        os.system(page.file_name)
-        exit()
-    else:
-        print("Program isn't up to date. Updating...")
+    try:
+        test = open(page.file_name, "rb")
+        test.close()
+    except FileNotFoundError:   # If program file doesn't exist, downloader will download it.
+        print(f"{page.file_name} does not exist. Downloading program...")
         page.download_program()
+        print("Launching your brand new program...")
         version.update_file()
-        print(f"Update completed. Launching {page.file_name}...")
         os.system(page.file_name)
-        exit()
+    else:
+        print("Checking for updates...")
+        local_version = version.get_from_file()
+        remote_version = version.get_from_page()
+        print(f"Version on the web: {remote_version}")
+        print(f"Local version: {local_version}")
+        if remote_version == local_version:
+            print(f"Program is up to date. Launching {page.file_name}...")
+            os.system(page.file_name)
+            exit()
+        else:
+            print("Program isn't up to date. Updating...")
+            page.download_program()
+            version.update_file()
+            print(f"Update completed. Launching {page.file_name}...")
+            os.system(page.file_name)
+            exit()
+
